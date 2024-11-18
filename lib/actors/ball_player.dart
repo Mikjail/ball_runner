@@ -5,16 +5,16 @@ class BallPlayer extends SpriteAnimationComponent
     with HasGameReference<BallRunner> {
   BallPlayer({
     required super.position,
-  }) : super(size: Vector2.all(64), anchor: Anchor.center);
+  }) : super(size: Vector2.all(50), anchor: Anchor.center);
 
   @override
   void onLoad() {
     animation = SpriteAnimation.fromFrameData(
       game.images.fromCache('ball.png'),
       SpriteAnimationData.sequenced(
-        amount: 4,
-        textureSize: Vector2.all(16),
-        stepTime: 0.12,
+        amount: 24,
+        textureSize: Vector2.all(50),
+        stepTime: 0.034,
       ),
     );
   }

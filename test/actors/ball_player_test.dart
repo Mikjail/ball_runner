@@ -12,7 +12,7 @@ THEN it should set the position size and anchor according to the image sprite
     final sut = BallPlayer(position: Vector2.all(0));
 
     expect(sut.position, Vector2.all(0));
-    expect(sut.size, Vector2.all(64));
+    expect(sut.size, Vector2.all(50));
     expect(sut.anchor, Anchor.center);
   });
 }
