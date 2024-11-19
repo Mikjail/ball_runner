@@ -3,6 +3,7 @@ import 'package:flame_test/flame_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:my_runner_game/actors/ball_player.dart';
 import 'package:my_runner_game/ball_runner.dart';
+import 'package:my_runner_game/objects/platform_block.dart';
 
 void main() {
   testWidgets('''
@@ -32,6 +33,40 @@ THEN the BallRunner Game is loaded
 
       expect(component.isMounted, true);
       expect(game.world.children.whereType<BallPlayer>().length, 1);
+    });
+
+    testWithGame('''
+    Given the Ball Runner
+    WHEN the game is loaded
+    THEN the game should have a velocity speed set as default to 0.0
+    ''', () => BallRunner(), (game) async {
+      final component =
+          BallPlayer(position: Vector2(128, game.canvasSize.y - 70))
+            ..addToParent(game);
+      await game.ready();
+
+      expect(component.isMounted, true);
+      expect(game.objectSpeed, 0.0);
+    });
+
+    testWithGame('''
+    Given the Ball Runner
+    WHEN the game is loaded
+    THEN the game should initialize PlatformBlock component
+    AND add 3 in the vector  1,1 1,2  1,3
+    ''', () => BallRunner(), (game) async {
+      final component =
+          BallPlayer(position: Vector2(128, game.canvasSize.y - 70))
+            ..addToParent(game);
+      await game.ready();
+
+      expect(component.isMounted, true);
+      final blocks = game.world.children.whereType<PlatformBlock>().toList();
+
+      expect(blocks[0].gridPosition, Vector2(5, 3));
+      expect(blocks[1].gridPosition, Vector2(6, 3));
+      expect(blocks[2].gridPosition, Vector2(7, 3));
+      expect(blocks[3].gridPosition, Vector2(8, 3));
     });
   });
 }

@@ -4,7 +4,7 @@ import 'package:my_runner_game/actors/ball_player.dart';
 
 void main() {
   test('''
-GIVEN the ball Player
+GIVEN the Ball Player
 WHEN initialized 
 THEN it should set the position size and anchor according to the image sprite
 
