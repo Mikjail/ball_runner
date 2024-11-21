@@ -1,5 +1,6 @@
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
+import 'package:flutter/foundation.dart';
 import 'package:my_runner_game/actors/ball_player.dart';
 import 'package:my_runner_game/managers/segment_manager.dart';
 import 'package:my_runner_game/objects/platform_block.dart';
@@ -7,6 +8,8 @@ import 'package:my_runner_game/objects/platform_block.dart';
 class BallRunner extends FlameGame {
   late BallPlayer _ball;
   double objectSpeed = 0.0;
+  late double lastBlockXPosition = 0.0;
+  late UniqueKey lastBlockKey;
 
   @override
   Future<void> onLoad() async {
