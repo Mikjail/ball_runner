@@ -3,6 +3,7 @@ import 'package:flame/game.dart';
 import 'package:flutter/foundation.dart';
 import 'package:my_runner_game/actors/ball_player.dart';
 import 'package:my_runner_game/managers/segment_manager.dart';
+import 'package:my_runner_game/objects/ground_block.dart';
 import 'package:my_runner_game/objects/platform_block.dart';
 
 class BallRunner extends FlameGame {
@@ -26,6 +27,10 @@ class BallRunner extends FlameGame {
   void loadGameSegments(int segmentIndex, double xPositionOffset) {
     for (final block in segments[segmentIndex]) {
       final component = switch (block.blockType) {
+        const (GroundBlock) => GroundBlock(
+            gridPosition: block.gridPosition,
+            xOffset: xPositionOffset,
+          ),
         const (PlatformBlock) => PlatformBlock(
             gridPosition: block.gridPosition,
             xOffset: xPositionOffset,

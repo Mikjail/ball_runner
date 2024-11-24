@@ -26,10 +26,7 @@ THEN the BallRunner Game is loaded
       WHEN the Game is loaded
       THEN the BallPlayer is added to the world
       ''', () => BallRunner(), (game) async {
-      final component =
-          BallPlayer(position: Vector2(128, game.canvasSize.y - 70))
-            ..addToParent(game);
-      await game.ready();
+      BallPlayer component = await makeSut(game);
 
       expect(component.isMounted, true);
       expect(game.world.children.whereType<BallPlayer>().length, 1);
@@ -40,10 +37,7 @@ THEN the BallRunner Game is loaded
     WHEN the game is loaded
     THEN the game should have a velocity speed set as default to 0.0
     ''', () => BallRunner(), (game) async {
-      final component =
-          BallPlayer(position: Vector2(128, game.canvasSize.y - 70))
-            ..addToParent(game);
-      await game.ready();
+      BallPlayer component = await makeSut(game);
 
       expect(component.isMounted, true);
       expect(game.objectSpeed, 0.0);
@@ -53,12 +47,9 @@ THEN the BallRunner Game is loaded
     Given the Ball Runner
     WHEN the game is loaded
     THEN the game should initialize PlatformBlock component
-    AND add 3 in the vector  1,1 1,2  1,3
+    AND add 3 in the vector  1,1 1,2 1,3
     ''', () => BallRunner(), (game) async {
-      final component =
-          BallPlayer(position: Vector2(128, game.canvasSize.y - 70))
-            ..addToParent(game);
-      await game.ready();
+      BallPlayer component = await makeSut(game);
 
       expect(component.isMounted, true);
       final blocks = game.world.children.whereType<PlatformBlock>().toList();
@@ -69,4 +60,22 @@ THEN the BallRunner Game is loaded
       expect(blocks[3].gridPosition, Vector2(8, 3));
     });
   });
+  testWithGame('''
+GIVEN the Ball Player initalized
+AND the initial animation is set
+THEN ball player should be set as running
+''', () => BallRunner(), (game) async {
+    BallPlayer component = await makeSut(game);
+
+    expect(component.isMounted, true);
+
+    expect(component.current, BallPlayerState.running);
+  });
+}
+
+Future<BallPlayer> makeSut(BallRunner game) async {
+  final component = BallPlayer(position: Vector2(128, game.canvasSize.y - 70))
+    ..addToParent(game);
+  await game.ready();
+  return component;
 }
