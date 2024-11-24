@@ -7,12 +7,21 @@ void main() {
 GIVEN the Ball Player
 WHEN initialized 
 THEN it should set the position size and anchor according to the image sprite
-
 ''', () {
     final sut = BallPlayer(position: Vector2.all(0));
 
     expect(sut.position, Vector2.all(0));
     expect(sut.size, Vector2.all(50));
     expect(sut.anchor, Anchor.center);
+  });
+
+  test('''
+GIVEN the Ball Player initalized
+AND the initial position is set
+THEN the isFalling property should be false
+''', () {
+    final sut = BallPlayer(position: Vector2.all(0));
+
+    expect(sut.isFalling, false);
   });
 }
