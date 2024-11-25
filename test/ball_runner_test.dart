@@ -33,10 +33,10 @@ THEN the BallRunner Game is loaded
     });
 
     testWithGame('''
-    Given the Ball Runner
-    WHEN the game is loaded
-    THEN the game should have a velocity speed set as default to 0.0
-    ''', () => BallRunner(), (game) async {
+      Given the Ball Runner
+      WHEN the game is loaded
+      THEN the game should have a velocity speed set as default to 0.0
+      ''', () => BallRunner(), (game) async {
       BallPlayer component = await makeSut(game);
 
       expect(component.isMounted, true);
@@ -44,11 +44,23 @@ THEN the BallRunner Game is loaded
     });
 
     testWithGame('''
-    Given the Ball Runner
-    WHEN the game is loaded
-    THEN the game should initialize PlatformBlock component
-    AND add 3 in the vector  1,1 1,2 1,3
-    ''', () => BallRunner(), (game) async {
+      GIVEN the Ball Player
+      WHEN initalized
+      THEN the joystick should be added
+      ''', () => BallRunner(), (game) async {
+      BallPlayer component = await makeSut(game);
+
+      expect(component.isMounted, true);
+
+      expect(game.joystick.isMounted, true);
+    });
+
+    testWithGame('''
+      Given the Ball Runner
+      WHEN the game is loaded
+      THEN the game should initialize PlatformBlock component
+      AND add 3 in the vector  1,1 1,2 1,3
+      ''', () => BallRunner(), (game) async {
       BallPlayer component = await makeSut(game);
 
       expect(component.isMounted, true);
@@ -59,23 +71,27 @@ THEN the BallRunner Game is loaded
       expect(blocks[2].gridPosition, Vector2(7, 3));
       expect(blocks[3].gridPosition, Vector2(8, 3));
     });
-  });
-  testWithGame('''
-GIVEN the Ball Player initalized
-AND the initial animation is set
-THEN ball player should be set as running
-''', () => BallRunner(), (game) async {
-    BallPlayer component = await makeSut(game);
 
-    expect(component.isMounted, true);
+    testWithGame('''
+      GIVEN the Ball Player initalized
+      WHEN the initial animation is set
+      THEN ball player should be set as idle
+      ''', () => BallRunner(), (game) async {
+      BallPlayer component = await makeSut(game);
 
-    expect(component.current, BallPlayerState.running);
+      expect(component.isMounted, true);
+
+      expect(component.current, PlayerState.idle);
+    });
   });
 }
 
-Future<BallPlayer> makeSut(BallRunner game) async {
+Future<BallPlayer> makeSut(
+  BallRunner game,
+) async {
   final component = BallPlayer(position: Vector2(128, game.canvasSize.y - 70))
     ..addToParent(game);
+
   await game.ready();
   return component;
 }
