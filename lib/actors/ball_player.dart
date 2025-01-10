@@ -87,6 +87,8 @@ class BallPlayer extends SpriteAnimationGroupComponent
         // ember must be on ground.
         if (fromAbove.dot(collisionNormal) > 0.9) {
           isOnGround = true;
+          // Reverse the vertical velocity to make the ball bounce down
+          velocity.y = -velocity.y * 0.5;
         }
 
         // If collision normal is almost downwards,
@@ -110,8 +112,15 @@ class BallPlayer extends SpriteAnimationGroupComponent
   void _updatePlayerMovement(double dt) {
     if (hasJumped && isOnGround) _playerJump(dt);
 
-    velocity.x = horizontalMovement * moveSpeed;
     position.x += velocity.x * dt;
+    velocity.x = horizontalMovement * moveSpeed;
+
+    const leftBoundary = 0.0;
+    if (position.x < leftBoundary) {
+      position.x = leftBoundary;
+      // Reverse the horizontal velocity to create a bounce effect
+      velocity.x = -velocity.x * 0.5; // Adjust the factor (0.5) as needed
+    }
   }
 
   void _updatePlayerState() {
