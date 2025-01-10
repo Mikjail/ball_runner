@@ -1,5 +1,4 @@
 import 'package:flame/components.dart';
-import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:my_runner_game/actors/ball_player.dart';
@@ -8,7 +7,7 @@ import 'package:my_runner_game/managers/segment_manager.dart';
 import 'package:my_runner_game/objects/ground_block.dart';
 import 'package:my_runner_game/objects/platform_block.dart';
 
-class BallRunner extends FlameGame with TapDetector, HasCollisionDetection {
+class BallRunner extends FlameGame with HasCollisionDetection {
   late BallPlayer _ball;
   double objectSpeed = 0.0;
   late double lastBlockXPosition = 0.0;
@@ -59,9 +58,15 @@ class BallRunner extends FlameGame with TapDetector, HasCollisionDetection {
   }
 
   void initializeGame() {
-    // add the joystick to the game
-    controller = PlayerController(images);
+    // add the joystick and jump button  to the game
+    controller = PlayerController(
+        images: images,
+        onJumpPressed: () {
+          _ball.hasJumped = true;
+        });
+
     add(controller.aJoystick);
+    add(controller.aJumpButton);
 
     final segmentsToLoad = (size.x / 500).ceil();
     segmentsToLoad.clamp(0, segments.length);

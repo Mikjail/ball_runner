@@ -1,12 +1,15 @@
+import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:my_runner_game/ball_runner.dart';
+import 'package:my_runner_game/objects/ground_block.dart';
+import 'package:my_runner_game/objects/platform_block.dart';
 
 class BallPlayer extends SpriteAnimationGroupComponent
-    with HasGameReference<BallRunner> {
+    with CollisionCallbacks, HasGameReference<BallRunner> {
   BallPlayer({
     required super.position,
   }) : super(size: Vector2.all(50), anchor: Anchor.center);
-// Used to store the last position of the player, so that we later can
+  // Used to store the last position of the player, so that we later can
   // determine which direction that the player is moving.
   final Vector2 _lastPosition = Vector2.zero();
 
@@ -18,6 +21,17 @@ class BallPlayer extends SpriteAnimationGroupComponent
   double horizontalMovement = 0;
   double moveSpeed = 200;
   Vector2 velocity = Vector2.zero();
+
+  // This is for the collision
+  final Vector2 fromAbove = Vector2(0, -1);
+  bool isOnGround = false;
+
+  // Gravity and ability to jump
+  final double _gravity = 9.8;
+  final double _jumpForce = 400;
+  final double _terminalVelocity = 300;
+
+  bool hasJumped = false;
 
   @override
   Future<void> onLoad() async {
@@ -42,16 +56,49 @@ class BallPlayer extends SpriteAnimationGroupComponent
 
     current = PlayerState.idle;
     _lastPosition.setFrom(position);
+
+    add(CircleHitbox());
   }
 
   @override
   void update(double dt) {
     _updatePlayerState();
     _updatePlayerMovement(dt);
+    _applyGravity(dt);
     super.update(dt);
   }
 
+  @override
+  void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
+    if (other is GroundBlock || other is PlatformBlock) {
+      if (intersectionPoints.length == 2) {
+        // Calculate the collision normal and separation distance.
+        final mid = (intersectionPoints.elementAt(0) +
+                intersectionPoints.elementAt(1)) /
+            2;
+
+        final collisionNormal = absoluteCenter - mid;
+        final separationDistance = (size.x / 2) - collisionNormal.length;
+        collisionNormal.normalize();
+
+        // If collision normal is almost upwards,
+        // ember must be on ground.
+        if (fromAbove.dot(collisionNormal) > 0.9) {
+          isOnGround = true;
+        }
+
+        // Resolve collision by moving ember along
+        // collision normal by separation distance.
+        position += collisionNormal.scaled(separationDistance);
+      }
+    }
+
+    super.onCollision(intersectionPoints, other);
+  }
+
   void _updatePlayerMovement(double dt) {
+    if (hasJumped && isOnGround) _playerJump(dt);
+
     velocity.x = horizontalMovement * moveSpeed;
     position.x += velocity.x * dt;
   }
@@ -69,6 +116,19 @@ class BallPlayer extends SpriteAnimationGroupComponent
       playerState = PlayerState.running;
     }
     current = playerState;
+  }
+
+  void _playerJump(double dt) {
+    velocity.y = -_jumpForce;
+    position.y += velocity.y * dt;
+    hasJumped = false;
+    isOnGround = false;
+  }
+
+  void _applyGravity(double dt) {
+    velocity.y += _gravity;
+    position.y += velocity.y * dt;
+    velocity.y = velocity.y.clamp(-_jumpForce, _terminalVelocity);
   }
 }
 
