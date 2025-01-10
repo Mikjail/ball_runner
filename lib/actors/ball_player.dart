@@ -24,11 +24,12 @@ class BallPlayer extends SpriteAnimationGroupComponent
 
   // This is for the collision
   final Vector2 fromAbove = Vector2(0, -1);
+  final Vector2 fromBelow = Vector2(0, 1);
   bool isOnGround = false;
 
   // Gravity and ability to jump
-  final double _gravity = 9.8;
-  final double _jumpForce = 400;
+  final double _gravity = 9.81;
+  final double _jumpForce = 380; // You may need to adjust this value
   final double _terminalVelocity = 300;
 
   bool hasJumped = false;
@@ -65,6 +66,7 @@ class BallPlayer extends SpriteAnimationGroupComponent
     _updatePlayerState();
     _updatePlayerMovement(dt);
     _applyGravity(dt);
+    _scrollWithPlayer(dt);
     super.update(dt);
   }
 
@@ -85,6 +87,15 @@ class BallPlayer extends SpriteAnimationGroupComponent
         // ember must be on ground.
         if (fromAbove.dot(collisionNormal) > 0.9) {
           isOnGround = true;
+        }
+
+        // If collision normal is almost downwards,
+        // ball must be hitting the bottom of the platform.
+        if (fromBelow.dot(collisionNormal) > 0.9) {
+          if (other is PlatformBlock) {
+            // Reverse the vertical velocity to make the ball bounce down
+            velocity.y = -velocity.y;
+          }
         }
 
         // Resolve collision by moving ember along
@@ -129,7 +140,24 @@ class BallPlayer extends SpriteAnimationGroupComponent
     velocity.y += _gravity;
     position.y += velocity.y * dt;
     velocity.y = velocity.y.clamp(-_jumpForce, _terminalVelocity);
+
+    _handleBlockCollision();
   }
+
+  void _scrollWithPlayer(double dt) {
+    game.objectSpeed = 0;
+    // Prevent ember from going backwards at screen edge.
+    if (position.x - 36 <= 0 && horizontalMovement < 0) {
+      velocity.x = 1;
+    }
+    // Prevent ball from going beyond half screen.
+    if (position.x + 64 >= game.size.x / 2 && horizontalMovement > 0) {
+      velocity.x = 1;
+      game.objectSpeed = -moveSpeed;
+    }
+  }
+
+  void _handleBlockCollision() {}
 }
 
 enum PlayerState {
