@@ -1,7 +1,6 @@
 import 'package:flame/components.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:my_runner_game/actors/ball_player.dart';
-import 'package:my_runner_game/ball_runner.dart';
 
 void main() {
   test('''

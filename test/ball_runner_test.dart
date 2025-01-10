@@ -52,7 +52,7 @@ THEN the BallRunner Game is loaded
 
       expect(component.isMounted, true);
 
-      expect(game.joystick.isMounted, true);
+      expect(game.controller.aJoystick.isMounted, true);
     });
 
     testWithGame('''
