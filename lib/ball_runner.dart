@@ -1,4 +1,4 @@
-import 'package:flame/components.dart';
+import 'package:flame/experimental.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:my_runner_game/actors/ball_player.dart';
@@ -27,7 +27,6 @@ class BallRunner extends FlameGame with HasCollisionDetection {
       'knob.png',
     ]);
 
-    camera.viewfinder.anchor = Anchor.topLeft;
     initializeGame();
   }
 
@@ -58,6 +57,16 @@ class BallRunner extends FlameGame with HasCollisionDetection {
   }
 
   void initializeGame() {
+    _setupController();
+
+    _setupSegments();
+
+    _setupPlayer();
+
+    _setupCamera();
+  }
+
+  void _setupController() {
     // add the joystick and jump button  to the game
     controller = PlayerController(
         images: images,
@@ -67,20 +76,32 @@ class BallRunner extends FlameGame with HasCollisionDetection {
 
     add(controller.aJoystick);
     add(controller.aJumpButton);
+  }
 
+  void _setupSegments() {
     final segmentsToLoad = (size.x / 500).ceil();
     segmentsToLoad.clamp(0, segments.length);
 
     for (var i = 0; i < segmentsToLoad; i++) {
       loadGameSegments(i, (500 * i).toDouble());
     }
+  }
 
+  void _setupPlayer() {
     _ball = BallPlayer(
-      position: Vector2(100, canvasSize.y - 70),
+      position: Vector2(100, canvasSize.y - 80),
     );
 
     //adding the ball
     world.add(_ball);
+  }
+
+  void _setupCamera() {
+    camera.setBounds(Rectangle.fromLTRB(0, 0, size.x, size.y - 500),
+        considerViewport: true);
+    camera.follow(
+      _ball,
+    );
   }
 
   void updateJoystickDirection() {

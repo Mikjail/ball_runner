@@ -155,7 +155,7 @@ class BallPlayer extends SpriteAnimationGroupComponent
 
   void _scrollWithPlayer(double dt) {
     game.objectSpeed = 0;
-    // Prevent ember from going backwards at screen edge.
+    // Prevent ball from going backwards at screen edge.
     if (position.x - 36 <= 0 && horizontalMovement < 0) {
       velocity.x = 1;
     }
