@@ -1,22 +1,21 @@
-import 'dart:math';
-
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 import 'package:my_runner_game/ball_runner.dart';
-import 'package:my_runner_game/managers/segment_manager.dart';
 
 class GroundBlock extends SpriteComponent with HasGameReference<BallRunner> {
   final Vector2 gridPosition;
   double xOffset;
+  final int numberOfSegments;
 
   final UniqueKey _blockKey = UniqueKey();
   final Vector2 velocity = Vector2.zero();
 
-  GroundBlock({
-    required this.gridPosition,
-    required this.xOffset,
-  }) : super(size: Vector2.all(64), anchor: Anchor.bottomLeft);
+  GroundBlock(
+      {required this.gridPosition,
+      required this.xOffset,
+      required this.numberOfSegments})
+      : super(size: Vector2.all(64), anchor: Anchor.bottomLeft);
 
   @override
   void onLoad() {
@@ -40,18 +39,18 @@ class GroundBlock extends SpriteComponent with HasGameReference<BallRunner> {
 
     if (position.x < -size.x) {
       removeFromParent();
-      if (gridPosition.x == 0) {
-        game.loadGameSegments(
-          Random().nextInt(segments.length),
-          game.lastBlockXPosition,
-        );
-      }
+      // if (gridPosition.x == 0) {
+      //   game.loadGameSegments(
+      //     Random().nextInt(numberOfSegments),
+      //     game.lastBlockXPosition,
+      //   );
+      // }
     }
-    if (gridPosition.x == 9) {
-      if (game.lastBlockKey == _blockKey) {
-        game.lastBlockXPosition = position.x + size.x - 10;
-      }
-    }
+    // if (gridPosition.x == 9) {
+    //   if (game.lastBlockKey == _blockKey) {
+    //     game.lastBlockXPosition = position.x + size.x - 10;
+    //   }
+    // }
 
     super.update(dt);
   }

@@ -8,7 +8,8 @@ GIVEN the Ground Block
 WHEN initialized 
 THEN it should set the grid position and x offset
 ''', () {
-    final sut = GroundBlock(gridPosition: Vector2.all(0), xOffset: 0.0);
+    final sut = GroundBlock(
+        gridPosition: Vector2.all(0), xOffset: 0.0, numberOfSegments: 0);
 
     expect(sut.gridPosition, Vector2.all(0));
     expect(sut.xOffset, 0.0);
