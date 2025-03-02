@@ -11,61 +11,51 @@ class SegmentManager {
   final _platformGenerator = PlatformGenerator();
   final int numberOfSegments;
 
-  SegmentManager({this.numberOfSegments = 2});
+  SegmentManager({this.numberOfSegments = 20});
 
-  Segments segments = [
-    segment0,
-    segment1,
-  ];
+  Segments segments = [segment0, segment1];
 
   void generate() {
     generateGround();
-    // generateObstacles();
+    generateObstacles();
   }
 
   void generateGround() {
-    var maxEmptyGrounds = 1;
-    for (var i = 0; i < numberOfSegments; i++) {
-      final segment = <Block>[];
-      if (i % 2 == 0 && maxEmptyGrounds < 3) {
-        maxEmptyGrounds++;
+    final Segments newSegments = [];
+    for (var i = 2; i < numberOfSegments; i++) {
+      final blocks = <Block>[];
+      for (var i = 0; i < 10; i++) {
+        blocks.add(Block(Vector2(i.toDouble(), 0), GroundBlock));
       }
-      var emptyGroundBySegment = 0;
-      // go through each block in the segment
-      for (var col = 0; col < 10; col++) {
-        // 0.33 chance to have an empty ground
-        if (emptyGroundBySegment < maxEmptyGrounds &&
-            Random().nextInt(2) == 0) {
-          emptyGroundBySegment++;
-          continue;
-        }
-        segment.add(Block(Vector2(col.toDouble(), 0), GroundBlock));
-      }
-      segments.add(segment);
+      newSegments.add(blocks);
     }
+    segments.addAll(newSegments);
   }
 
-  void generateBackGround() {}
-
   void generateObstacles() {
-    final obstacleSpace = 3;
     for (var i = 2; i < segments.length; i++) {
-      final segment = segments[i];
-      var obstacleCountBySegment = 0;
-      var obstacles = <Block>[];
-      for (var j = 0; j < segment.length; j++) {
-        if (segment[j].blockType == GroundBlock &&
-            obstacleCountBySegment < 2 &&
-            Random().nextInt(2) == 0) {
-          obstacleCountBySegment++;
-          obstacles.addAll(_platformGenerator.generatePlatform(
-              startPosition: Vector2(j.toDouble(), 1),
-              type: PlatformType.vertical,
-              length: 3));
-          j += obstacleSpace;
+      final List<Block> obstacles = [];
+      double lastObstacleX =
+          -2; // Initialize to a value that ensures the first obstacle can be placed
+      for (var block in segments[i]) {
+        if (block.blockType == GroundBlock) {
+          // Ensure there is a space of 3 blocks between obstacles
+          if (block.gridPosition.x >= lastObstacleX + 2) {
+            // 0.33 chance to place an obstacle above the ground block
+            if (Random().nextInt(3) == 0) {
+              final generatedPlatforms = _platformGenerator.generatePlatform(
+                  startPosition:
+                      Vector2(block.gridPosition.x, block.gridPosition.y + 1),
+                  type: PlatformType.vertical,
+                  length: Random().nextInt(3) + 1);
+              obstacles.addAll(generatedPlatforms);
+              lastObstacleX =
+                  block.gridPosition.x; // Update the last obstacle position
+            }
+          }
         }
       }
-      segment.addAll(obstacles);
+      segments[i].addAll(obstacles);
     }
   }
 }

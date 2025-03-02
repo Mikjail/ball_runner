@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
@@ -39,18 +41,19 @@ class GroundBlock extends SpriteComponent with HasGameReference<BallRunner> {
 
     if (position.x < -size.x) {
       removeFromParent();
-      // if (gridPosition.x == 0) {
-      //   game.loadGameSegments(
-      //     Random().nextInt(numberOfSegments),
-      //     game.lastBlockXPosition,
-      //   );
-      // }
+      if (gridPosition.x == 0) {
+        game.loadGameSegments(
+          Random().nextInt(numberOfSegments),
+          game.lastBlockXPosition,
+        );
+      }
     }
-    // if (gridPosition.x == 9) {
-    //   if (game.lastBlockKey == _blockKey) {
-    //     game.lastBlockXPosition = position.x + size.x - 10;
-    //   }
-    // }
+    // I think this genearates more ground blocks
+    if (gridPosition.x == 9) {
+      if (game.lastBlockKey == _blockKey) {
+        game.lastBlockXPosition = position.x + size.x - 10;
+      }
+    }
 
     super.update(dt);
   }
