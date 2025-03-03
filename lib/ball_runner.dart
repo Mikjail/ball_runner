@@ -113,6 +113,7 @@ class BallRunner extends FlameGame with HasCollisionDetection {
 
     camera.follow(
       _ball,
+      horizontalOnly: true,
     );
   }
 
@@ -139,7 +140,7 @@ class Background extends ParallaxComponent<BallRunner> {
         ParallaxImageData('background.png'),
       ],
       baseVelocity: Vector2.zero(),
-      velocityMultiplierDelta: Vector2(1.0, 0.0),
+      velocityMultiplierDelta: Vector2(1.0, 1.0),
     );
   }
 

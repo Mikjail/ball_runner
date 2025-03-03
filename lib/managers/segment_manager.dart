@@ -36,11 +36,11 @@ class SegmentManager {
     for (var i = 2; i < segments.length; i++) {
       final List<Block> obstacles = [];
       double lastObstacleX =
-          -2; // Initialize to a value that ensures the first obstacle can be placed
+          -3; // Initialize to a value that ensures the first obstacle can be placed
       for (var block in segments[i]) {
         if (block.blockType == GroundBlock) {
           // Ensure there is a space of 3 blocks between obstacles
-          if (block.gridPosition.x >= lastObstacleX + 2) {
+          if (block.gridPosition.x >= lastObstacleX + 3) {
             // 0.33 chance to place an obstacle above the ground block
             if (Random().nextInt(3) == 0) {
               final generatedPlatforms = _platformGenerator.generatePlatform(
